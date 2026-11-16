@@ -12,13 +12,14 @@ BASE_DIR = Path(__file__).resolve().parent
 # WEB3 INIT
 # =====================================================
 
-print("🌐 WEB3 PROVIDER:", settings.ALCHEMY_HTTP)
-w3 = Web3(Web3.HTTPProvider(settings.ALCHEMY_HTTP))
+provider_url = settings.WEB3_PROVIDER or settings.ALCHEMY_HTTP
+print("🌐 WEB3 PROVIDER:", provider_url)
+w3 = Web3(Web3.HTTPProvider(provider_url))
 
 print("🔌 Web3 connected:", w3.is_connected())
 print("🔗 Chain ID:", w3.eth.chain_id if w3.is_connected() else "N/A")
 
-if not w3.is_connected():
+if not w3.is_connected() and not settings.DISABLE_ONCHAIN:
     raise RuntimeError("Blockchain RPC not reachable")
 
 # =====================================================
@@ -31,39 +32,47 @@ REGISTRAR_ADDRESS = Web3.to_checksum_address(REGISTRAR_ACCOUNT.address)
 print("👤 REGISTRAR ADDRESS:", REGISTRAR_ADDRESS)
 
 # =====================================================
+# ABI LOADER HELPER
+# =====================================================
+def load_contract_abi(contract_name: str):
+    candidates = [
+        BASE_DIR / "contracts" / "contracts" / f"{contract_name}.sol" / f"{contract_name}.json",
+        BASE_DIR / "contracts" / "abi" / f"{contract_name}.json",
+        BASE_DIR.parent / "hardhat" / "artifacts" / "contracts" / f"{contract_name}.sol" / f"{contract_name}.json",
+    ]
+    for p in candidates:
+        if p.exists():
+            return json.loads(p.read_text())["abi"]
+    return None
+
+# =====================================================
 # REGISTRY RESOLVER (PHASE 1–4)
 # =====================================================
 
-ABI_PATH = BASE_DIR / "contracts" / "abi" / "RegistryResolver.json"
-ABI = json.loads(ABI_PATH.read_text())["abi"]
+ABI = load_contract_abi("RegistryResolver")
 
 registry_resolver_contract = None
 
-if settings.CONTRACT_ADDRESS:
+if settings.CONTRACT_ADDRESS and ABI:
     registry_resolver_contract = w3.eth.contract(
         address=Web3.to_checksum_address(settings.CONTRACT_ADDRESS),
         abi=ABI,
     )
     print("📜 Using RegistryResolver at:", registry_resolver_contract.address)
 else:
-    print("❌ CONTRACT_ADDRESS not set")
+    print("❌ CONTRACT_ADDRESS not set or ABI missing")
 
 # =====================================================
 # AGREEMENT LEDGER (PHASE 9)
 # =====================================================
 
-AGREEMENT_LEDGER_ABI_PATH = BASE_DIR / "contracts" / "abi" / "AgreementLedger.json"
-
 AGREEMENT_LEDGER_ADDRESS = None
 agreement_ledger_contract = None
+AGREEMENT_LEDGER_ABI = load_contract_abi("AgreementLedger")
 
-if AGREEMENT_LEDGER_ABI_PATH.exists():
-    AGREEMENT_LEDGER_ABI = json.loads(
-        AGREEMENT_LEDGER_ABI_PATH.read_text()
-    )["abi"]
+if AGREEMENT_LEDGER_ABI:
     print("📑 AgreementLedger ABI loaded")
 else:
-    AGREEMENT_LEDGER_ABI = None
     print("❌ AgreementLedger ABI not found")
 
 if settings.AGREEMENT_LEDGER_ADDRESS and AGREEMENT_LEDGER_ABI:
@@ -84,19 +93,9 @@ else:
 # AGREEMENT MERKLE ANCHOR (PHASE 9B)
 # =====================================================
 
-AGREEMENT_MERKLE_ANCHOR_ABI_PATH = (
-    BASE_DIR / "contracts" / "abi" / "AgreementMerkleAnchor.json"
-)
-
 AGREEMENT_MERKLE_ANCHOR_ADDRESS = None
 agreement_merkle_anchor_contract = None
-
-if AGREEMENT_MERKLE_ANCHOR_ABI_PATH.exists():
-    AGREEMENT_MERKLE_ANCHOR_ABI = json.loads(
-        AGREEMENT_MERKLE_ANCHOR_ABI_PATH.read_text()
-    )["abi"]
-else:
-    AGREEMENT_MERKLE_ANCHOR_ABI = None
+AGREEMENT_MERKLE_ANCHOR_ABI = load_contract_abi("AgreementMerkleAnchor")
 
 if settings.AGREEMENT_MERKLE_ANCHOR_ADDRESS and AGREEMENT_MERKLE_ANCHOR_ABI:
     AGREEMENT_MERKLE_ANCHOR_ADDRESS = Web3.to_checksum_address(
@@ -116,12 +115,11 @@ else:
 # REGISTRY ROOT ANCHOR (PHASE 5)
 # =====================================================
 
-ROOT_ABI_PATH = BASE_DIR / "contracts" / "abi" / "RegistryRootAnchor.json"
-ROOT_ABI = json.loads(ROOT_ABI_PATH.read_text())["abi"]
+ROOT_ABI = load_contract_abi("RegistryRootAnchor")
 
 registry_root_contract = None
 
-if settings.REGISTRY_ROOT_CONTRACT:
+if settings.REGISTRY_ROOT_CONTRACT and ROOT_ABI:
     registry_root_contract = w3.eth.contract(
         address=Web3.to_checksum_address(settings.REGISTRY_ROOT_CONTRACT),
         abi=ROOT_ABI,

@@ -6,14 +6,26 @@ from jose import jwt, JWTError
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
+import bcrypt
 from models import User, RefreshToken, get_db
 from schemas.auth_schema import RegisterRequest, LoginRequest, TokenResponse
 from config import settings
 from deps.auth import require_admin  
 
 router = APIRouter(prefix="/auth", tags=["auth"])
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 limiter = Limiter(key_func=get_remote_address)
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    try:
+        pw_bytes = plain_password[:72].encode('utf-8')
+        hash_bytes = hashed_password.encode('utf-8')
+        return bcrypt.checkpw(pw_bytes, hash_bytes)
+    except Exception:
+        return False
+
+def hash_password(plain_password: str) -> str:
+    pw_bytes = plain_password[:72].encode('utf-8')
+    return bcrypt.hashpw(pw_bytes, bcrypt.gensalt()).decode('utf-8')
 
 
 def create_token(payload: dict, expires_minutes: int):
@@ -41,7 +53,7 @@ def register(
     
     user = User(
         username=req.username,
-        password_hash=pwd_context.hash(password_truncated),
+        password_hash=hash_password(password_truncated),
         roles=["user"],
     )
 
@@ -65,7 +77,7 @@ def login(
     # Bcrypt has a 72-byte limit - truncate password to ensure compatibility
     password_truncated = req.password[:72] if len(req.password) > 72 else req.password
     
-    if not user or not pwd_context.verify(password_truncated, user.password_hash):
+    if not user or not verify_password(password_truncated, user.password_hash):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     access_token = create_token(

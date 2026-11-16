@@ -119,7 +119,7 @@ async def create_record(
         format="CANONICAL",
         owner_address=req.owner_address,
         canonical_json=canonical_bytes.decode("utf-8"),
-        geom=f"SRID=4326;{shapely_poly.wkt}",
+        geom={"type": "Polygon", "coordinates": [coords]},
         # DB-only fields
         survey_number=getattr(req, "survey_number", None),
         owner_name=getattr(req, "owner_name", None),
@@ -129,10 +129,13 @@ async def create_record(
     db.commit()
     db.refresh(record)
 
-    area_m2 = db.execute(
-        text("SELECT ST_Area(geom::geography) FROM property_records WHERE id = :id"),
-        {"id": str(record.id)},
-    ).scalar()
+    area_m2 = shapely_poly.area * (111_320 ** 2)  # rough degrees² → m² (equatorial approx)
+    # More accurate: use utils area helper if available
+    try:
+        from utils.area import geodesic_area_m2
+        area_m2 = geodesic_area_m2(coords)
+    except Exception:
+        pass
 
     record.area_m2 = area_m2
     db.commit()

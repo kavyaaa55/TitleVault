@@ -7,7 +7,7 @@ import time
 
 from shapely.geometry import Polygon
 from shapely.ops import transform
-import pyproj
+from utils.area import geodesic_area_m2
 
 from models import PropertyRecord, SessionLocal
 from config import settings
@@ -21,15 +21,9 @@ from ipfs_client import fetch_raw_from_ipfs
 def compute_area_m2(coords):
     """
     Compute polygon area in square meters
-    using EPSG:3857 projection
     """
     poly = Polygon(coords)
-
-    projector = pyproj.Transformer.from_crs(
-        "EPSG:4326", "EPSG:3857", always_xy=True
-    ).transform
-
-    return transform(projector, poly).area
+    return geodesic_area_m2(poly)
 
 
 # --------------------------------------------------

@@ -1,5 +1,7 @@
 # backend/ipfs_client.py
 import os
+import hashlib
+import json as _json
 import requests
 
 # ======================================================
@@ -16,6 +18,15 @@ IPFS_GATEWAY = "https://gateway.pinata.cloud/ipfs"
 
 
 # ======================================================
+# LOCAL MOCK CID (deterministic SHA-256 based)
+# Format: Qm<32-hex-chars>  (looks like a CIDv0)
+# ======================================================
+def _local_cid(data: bytes) -> str:
+    h = hashlib.sha256(data).hexdigest()
+    return f"Qm{h[:44]}"
+
+
+# ======================================================
 # LEGACY JSON UPLOAD (kept for compatibility)
 # ======================================================
 def upload_json_to_ipfs(canonical_json: dict) -> str:
@@ -24,7 +35,10 @@ def upload_json_to_ipfs(canonical_json: dict) -> str:
     print("🌐 Provider:", IPFS_PROVIDER)
 
     if IPFS_PROVIDER != "pinata":
-        raise RuntimeError("Unsupported IPFS provider")
+        cid = _local_cid(_json.dumps(canonical_json, sort_keys=True).encode())
+        print(f"📦 [LOCAL IPFS MOCK] CID: {cid}")
+        print("===========================================\n")
+        return cid
 
     try:
         headers = {
@@ -68,7 +82,10 @@ def upload_bytes_to_ipfs(data: bytes, filename: str = "record.bin") -> str:
     print("🌐 Provider:", IPFS_PROVIDER)
 
     if IPFS_PROVIDER != "pinata":
-        raise RuntimeError("Unsupported IPFS provider")
+        cid = _local_cid(data)
+        print(f"📦 [LOCAL IPFS MOCK] CID: {cid}")
+        print("===========================================\n")
+        return cid
 
     try:
         headers = {
