@@ -1,0 +1,92 @@
+{
+  "addresses": {
+    "admin": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+    "user1": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    "buyer1": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
+    "buyer2": "0x90F79bf6EB2c4f870365E785982E1f101E93b906",
+    "buyer3": "0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65",
+    "buyer4": "0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc",
+    "tenant1": "0x976EA74026E726554dB657fA54763abd0C3a0aa9",
+    "tenant2": "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955"
+  },
+  "users": [
+    { "username": "admin@gmail.com", "password": "admin@123", "roles": ["admin"] },
+    { "username": "user1@gmail.com", "password": "user1@123", "roles": ["user"] }
+  ],
+  "land_parcels": [
+    {
+      "key": "mumbai",
+      "owner_key": "admin",
+      "owner_name": "Rajesh Kumar Sharma",
+      "survey_number": "MH-MU-001-2024",
+      "base_lng": 72.8777, "base_lat": 19.0760, "size": 0.0030,
+      "metadata": { "district": "Mumbai", "state": "Maharashtra", "land_type": "residential", "area_sqft": 4500.0, "usage": "residential", "registered_by": "admin", "taluka": "Mumbai", "village": "Mumbai Village", "pincode": "400001" }
+    },
+    {
+      "key": "pune",
+      "owner_key": "admin",
+      "owner_name": "Priya Nair Iyer",
+      "survey_number": "MH-PU-002-2024",
+      "base_lng": 73.8567, "base_lat": 18.5204, "size": 0.0025,
+      "metadata": { "district": "Pune", "state": "Maharashtra", "land_type": "commercial", "area_sqft": 6200.0, "usage": "residential", "registered_by": "admin", "taluka": "Pune", "village": "Pune Village", "pincode": "400001" }
+    },
+    {
+      "key": "bangalore",
+      "owner_key": "user1",
+      "owner_name": "Amit Singh Rathore",
+      "survey_number": "KA-BL-003-2024",
+      "base_lng": 77.5946, "base_lat": 12.9716, "size": 0.0028,
+      "metadata": { "district": "Bangalore", "state": "Karnataka", "land_type": "agricultural", "area_sqft": 8800.0, "usage": "residential", "registered_by": "user1", "taluka": "Bangalore", "village": "Bangalore Village", "pincode": "400001" }
+    },
+    {
+      "key": "chennai",
+      "owner_key": "user1",
+      "owner_name": "Deepa Subramaniam",
+      "survey_number": "TN-CH-004-2024",
+      "base_lng": 80.2707, "base_lat": 13.0827, "size": 0.0022,
+      "metadata": { "district": "Chennai", "state": "Tamil Nadu", "land_type": "residential", "area_sqft": 3200.0, "usage": "residential", "registered_by": "user1", "taluka": "Chennai", "village": "Chennai Village", "pincode": "400001" }
+    }
+  ],
+  "buildings": [
+    {
+      "key": "tower_a", "land_key": "mumbai", "name": "Sunrise Heights Tower A", "total_floors": 12,
+      "flats": [
+        { "flat_number": "101", "floor_number": "1st", "owner_key": "buyer1", "area_m2": 72.5 },
+        { "flat_number": "201", "floor_number": "2nd", "owner_key": "buyer2", "area_m2": 85.0 }
+      ]
+    },
+    {
+      "key": "tower_b", "land_key": "mumbai", "name": "Sunrise Heights Tower B", "total_floors": 8,
+      "flats": [
+        { "flat_number": "102", "floor_number": "1st", "owner_key": "buyer3", "area_m2": 65.0 },
+        { "flat_number": "301", "floor_number": "3rd", "owner_key": "buyer4", "area_m2": 90.5 }
+      ]
+    },
+    {
+      "key": "prestige_commerce", "land_key": "pune", "name": "Prestige Commerce Park", "total_floors": 15,
+      "flats": [
+        { "flat_number": "A101", "floor_number": "1st", "owner_key": "buyer1", "area_m2": 110.0 },
+        { "flat_number": "B201", "floor_number": "2nd", "owner_key": "buyer2", "area_m2": 125.0 }
+      ]
+    },
+    {
+      "key": "prestige_annex", "land_key": "pune", "name": "Prestige Annex Block", "total_floors": 6,
+      "flats": [
+        { "flat_number": "A102", "floor_number": "1st", "owner_key": "tenant1", "area_m2": 95.0 },
+        { "flat_number": "B202", "floor_number": "2nd", "owner_key": "tenant2", "area_m2": 108.0 }
+      ]
+    }
+  ],
+  "land_agreements": [
+    { "land_key": "mumbai", "seller_key": "admin", "buyer_key": "buyer1", "total_price": 15000000.0, "activate": true, "complete": true },
+    { "land_key": "pune", "seller_key": "admin", "buyer_key": "buyer2", "total_price": 22000000.0, "activate": true },
+    { "land_key": "bangalore", "seller_key": "user1", "buyer_key": "buyer3", "total_price": 9500000.0, "activate": true },
+    { "land_key": "chennai", "seller_key": "user1", "buyer_key": "buyer4", "total_price": 7800000.0, "activate": true }
+  ],
+  "flat_lease_agreements": [
+    { "building_key": "tower_a", "flat_number": "101", "seller_key": "admin", "tenant_key": "tenant1", "monthly_rent": 45000.0 },
+    { "building_key": "tower_a", "flat_number": "201", "seller_key": "admin", "tenant_key": "tenant2", "monthly_rent": 52000.0 },
+    { "building_key": "tower_b", "flat_number": "102", "seller_key": "buyer1", "tenant_key": "tenant1", "monthly_rent": 38000.0 },
+    { "building_key": "tower_b", "flat_number": "301", "seller_key": "buyer2", "tenant_key": "tenant2", "monthly_rent": 60000.0 }
+  ]
+}
