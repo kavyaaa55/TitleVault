@@ -99,11 +99,7 @@ app.mount("/assets", StaticFiles(directory=ASSETS_DIR), name="assets")
 @app.middleware("http")
 async def log_request(request: Request, call_next):
     if request.method == "POST" and "registry/create" in request.url.path:
-        try:
-            body = await request.body()
-            logging.warning(f"📋 POST {request.url.path}: {body.decode('utf-8')[:500]}")
-        except:
-            pass
+        logging.warning(f"📋 POST {request.url.path}")
     response = await call_next(request)
     return response
 

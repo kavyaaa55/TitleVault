@@ -1,0 +1,27 @@
+# Backend API Endpoints
+VITE_API_BASE_URL=http://localhost:8000
+VITE_API_BASE=http://localhost:8000
+VITE_WS_URL=ws://localhost:8000/ws
+
+# Blockchain Network Configuration (Sepolia Testnet via Alchemy)
+VITE_CHAIN_ID=11155111
+VITE_CHAIN_NAME=Sepolia
+VITE_RPC_URL=https://eth-sepolia.g.alchemy.com/v2/alch_yq9S7cf99faAibbp87jzy
+VITE_BLOCK_EXPLORER=https://sepolia.etherscan.io
+
+# Deployed Contract Addresses
+VITE_REGISTRY_CONTRACT=0x5FbDB2315678afecb367f032d93F642f64180aa3
+VITE_AGREEMENT_CONTRACT=0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
+
+# Mapbox Access Token
+VITE_MAPBOX_TOKEN=pk.eyJ1Ijoic3BlZWR3YXNwIiwiYSI6ImNtd2kzMDZuNzE5aXUyenIwMnBjcjAzbjQifQ.yjZEhpEVIMANunyvT0oxfA
+
+# Map Defaults
+VITE_DEFAULT_MAP_CENTER_LAT=40.7128
+VITE_DEFAULT_MAP_CENTER_LNG=-74.0060
+VITE_DEFAULT_MAP_ZOOM=10
+
+# UI Feature Toggles
+VITE_ENABLE_SPATIAL_FEATURES=true
+VITE_ENABLE_COURT_FEATURES=true
+VITE_ENABLE_FRAUD_DETECTION=true

@@ -396,7 +396,7 @@ def main():
     # Registry list
     list_res = api("get", "/registry/list?limit=20", admin_tok,
                    label="GET registry list")
-    total = list_res.get("total", list_res.get("count", len(list_res.get("records", []))))
+    total = list_res.get("total", list_res.get("count", len(list_res.get("items", list_res.get("records", [])))))
     print(f"     total records in DB = {total}")
 
     # Analytics summary (correct endpoint)
@@ -421,9 +421,9 @@ def main():
     print(f"     total agreements = {agr_total}")
 
     # Affidavit for first record (just check it doesn't error)
-    first_id = next((i for i in record_ids if i), None)
-    if first_id:
-        aff_res = api("get", f"/registry/affidavit/{first_id}", admin_tok,
+    first_hash_for_affidavit = next((h for h in record_hashes if h), None)
+    if first_hash_for_affidavit:
+        aff_res = api("get", f"/registry/affidavit/{first_hash_for_affidavit}", admin_tok,
                       label=f"GET affidavit for record 1")
         print(f"     affidavit keys: {list(aff_res.keys()) if isinstance(aff_res, dict) else 'binary/pdf'}")
 

@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = 'add_survey_owner_fields'
-down_revision = None
+down_revision = '3ffdf3829e8c'
 branch_labels = None
 depends_on = None
 
